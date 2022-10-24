@@ -1,10 +1,9 @@
 #include<iostream>
 
-using namespace std;
 
-void insertionSort(unsigned int* heights, string* names, int n){
+void insertionSort(unsigned int* heights, std::string* names, int n){
     int i, key_heights, j;
-    string key_names;
+    std::string key_names;
     for (i = 1; i < n; i++)
     { 
         key_heights = heights[i]; 
@@ -23,7 +22,7 @@ void insertionSort(unsigned int* heights, string* names, int n){
     for (int i = 0; i < n; i++)
     {
         if(heights[i]!=0){
-        cout << names[i] << "-" << heights[i] << endl;
+        std::cout << names[i] << "-" << heights[i] << "\n";
         }
     }
     
@@ -31,34 +30,34 @@ void insertionSort(unsigned int* heights, string* names, int n){
   
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cout.tie(nullptr);
-    cin.tie(nullptr);
+    std::ios_base::sync_with_stdio(false);
+    std::cout.tie(nullptr);
+    std::cin.tie(nullptr);
     unsigned int tests; //number of test cases
     unsigned int mountains; //number of mountains
     unsigned int *heights; // array of heights
     unsigned int *heights2;
-    string* names; // array of heights
-    string* names2;
-    string a;
+    std::string* names; // array of heights
+    std::string* names2;
+    std::string a;
     unsigned int b;
-    cin >> tests;
+    std::cin >> tests;
     for(int i=0;i<tests;i++)
     {
         //cout<<"Enter the number of mountains: ";
-        cin>>mountains;
+        std::cin>>mountains;
         heights = new unsigned int[mountains];
-        names = new string[mountains];
+        names = new std::string[mountains];
         heights2 = new unsigned int[mountains];
-        names2 = new string[mountains];
+        names2 = new std::string[mountains];
         int powerOfTwoCounter = 0;
         int powerOfOneCounter = 0;
         for(int j=0;j<mountains;j++)
         {
             //cout<<"Enter the height of the mountain: ";
-            cin >> a;
-            cin >> b;
-            if (b > 0 && ((b & (b - 1)) == 0)){
+            std::cin >> a;
+            std::cin >> b;
+            if (((b & (b - 1)) == 0)){
                 heights2[j - powerOfOneCounter] = b;
                 names2[j - powerOfOneCounter] = a;
                 powerOfTwoCounter++;
@@ -68,8 +67,6 @@ int main()
                 names[j - powerOfTwoCounter] = a;
                 powerOfOneCounter++;
             }
-            cin.ignore();
-            cin.clear();
         }
         if(mountains>1){
             if(powerOfTwoCounter > 0){
@@ -81,8 +78,12 @@ int main()
         }
         else
         {
-            cout << names[0] << "-" << heights[0] << "\n";
+            std::cout << names[0] << "-" << heights[0] << "\n";
         }
     }
+    delete[] heights;
+    delete[] names;
+    delete[] heights2;
+    delete[] names2;
     return 0;
 }
