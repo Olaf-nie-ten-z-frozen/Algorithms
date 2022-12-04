@@ -8,9 +8,9 @@
 class Graph{
     bool* visited; //visited list
     std::map <std::string, int > graph; //graph
-       
+    std::map <std::string, std::vector<std::string> > neighbours;
     public:
-        Graph(int num){
+        explicit Graph(int num){
             visited = new bool[num];
             for(int i = 0; i < num; i++){
                 visited[i] = false;
@@ -18,67 +18,72 @@ class Graph{
         }
         void addVertex(int num, std::string top){
             graph[top] = num;
-            std::cout<<"Dodano wierzchołek: "<<top<<" | "<<num <<"\n";
+            //std::cout<<"Dodano wierzchołek: "<<top<<" | "<<num <<"\n";
         }
         void addEdge(std::string vil1, std::string vil2){
             if(vil1 == vil2){
-                std::cout<<"Nie można dodać krawędzi do samego siebie\n";
+                //std::cout<<"Nie można dodać krawędzi do samego siebie\n";
             }
             else if(graph.find(vil1) != graph.end() && graph.find(vil2) != graph.end()){
-                std::cout<<"Dodano krawędź: "<<vil1<<" | "<<vil2<<"\n";
+                //std::cout<<"Dodano krawędź: "<<vil1<<" | "<<vil2<<"\n";
                 neighbours[vil1].push_back(vil2);
                 neighbours[vil2].push_back(vil1);
             }
             else{
-                std::cout<<"Nie ma takiego wierzchołka\n";
+                //std::cout<<"Nie ma takiego wierzchołka\n";
             }
             
         }
         void BFS(std::string start, std::vector<std::string> wanted_vil, int n){
             std::list<std::string> queue;
             int dist[n];
-            for (int i = 0; i < n; i++){
+            int found = 0;
+            for (int i = 0; i < n; i++) {
                 dist[i] = 0;
             }
-            
             int counter = 0;
             visited[graph[start]] = true;
             queue.push_back(start);
-
             while(!queue.empty()){
                 start = queue.front();
                 queue.pop_front();
-                for (int i = 0; i < neighbours[start].size(); i++)
-                {
-                    if(!visited[graph[neighbours[start][i]]]){ //if not visited
+                counter++;
+                for (int i = 0; i < neighbours[start].size(); i++) {
+                    if (!visited[graph[neighbours[start][i]]]) { //if not visited
                         visited[graph[neighbours[start][i]]] = true; //mark as visited
-                        if (find(wanted_vil.begin(), wanted_vil.end(), neighbours[start][i]) != wanted_vil.end())//find if index is in wanted_vil
-                        {   
-                            int temp = find(wanted_vil.begin(), wanted_vil.end(), neighbours[start][i]) - wanted_vil.begin(); // find index of start in wanted_vil
-                            wanted_vil.erase(wanted_vil.begin()+temp); // remove from vector 
-                            if(wanted_vil.size() == 0){ //if all wanted villages are visited
-                                std::cout<<"Znaleziono wszystkie wioski\n";
-                                std::cout << counter;
+                        if (find(wanted_vil.begin(), wanted_vil.end(), neighbours[start][i]) !=
+                            wanted_vil.end())//find if index is in wanted_vil
+                        {
+                            int temp = find(wanted_vil.begin(), wanted_vil.end(), neighbours[start][i]) -
+                                       wanted_vil.begin(); // find index of start in wanted_vil
+                            wanted_vil.erase(wanted_vil.begin() + temp); // remove from vector
+                            found++;
+                            if (wanted_vil.empty()) { //if all wanted villages are visited
+                                //std::cout << "Znaleziono wszystkie wioski\n";
+                                if(found > 1){
+                                    counter += found-1;
+                                    }
+                                std::cout << counter << "\n";
+                                return;
                             }
                         }
                         queue.push_back(neighbours[start][i]);
                         dist[graph[neighbours[start][i]]] = dist[graph[start]] + 1;
-                    } 
+                    }
                 }
+                if (found > 1) {
+                    counter += found - 1;
+                }
+                found = 0;
+            }
 
-            }
-            for (int i = 0; i < n; i++)
-            {
-                std::cout<<dist[i]<<" ";
-            }
-            
         }
 };
 
 int main(){
     int n,m;
     std::string all_vil, starting_vil,vil1,vil2;
-    std::cout<<"Enter the number of villages and chosen villages: ";
+    //std::cout<<"Enter the number of villages and chosen villages: ";
     std::cin >> n >> m;
     Graph graph(n);
     std::vector <std::string> wanted_vil;
@@ -86,7 +91,7 @@ int main(){
         std::cin>>all_vil;
         graph.addVertex(i, all_vil);
     }
-    std::cout<<"Enter the number of roads: ";
+    //std::cout<<"Enter the number of roads: ";
     for (int i = 0; i < n; i++)
     {
         vil2 = "";
