@@ -3,43 +3,41 @@ using namespace std;
 
 class Node{
     public:
-    int data;
-    Node* next;
-    Node* prev;
-    Node* head;
-    
-    void insert(int data, Node** head){
+    int data{};
+    Node* next{};
+    Node* prev{};
+
+    static void insert(int data, Node** head){
         Node* newNode = new Node();
         Node* temp = *head;
+        if(*head == nullptr){
         newNode->data = data;
-        newNode->next = *head;
-        if(*head == NULL){
+        newNode->next = newNode->prev = newNode;
             *head = newNode;
-            newNode->prev = NULL;
             return;
         }
-        else{
-        while(temp->next != NULL){
-            temp = temp->next;
-            temp->next = newNode;
-            newNode->prev = temp;
-        }
+        Node* last = (*head)->prev;
+        newNode->data = data;
+        newNode->next = *head;
+        (*head)->prev = newNode;
+        newNode->prev = last;
+        last->next = newNode;
     }
-    }
-    void printInOrder(Node** head){
-        Node* temp = *head;
-        if(temp == NULL){
+    void printInOrder(){
+        Node* temp = this;
+        Node* mem = temp;
+        if(temp == nullptr){
             cout << "List is empty" << endl;
             return;
         }
-        while(temp != NULL){
+        do{
             cout << temp->data << " ";
             temp = temp->next;
-        }
+        }while(temp != mem);
         cout << endl;
     }
-    void remover(int index, Node** head){
-        /*int counter = 0;
+    static void remover(int index, Node** head){
+        int counter = 0;
         Node* temp = *head;
         for (int i = 0; i < index; i++)
         {
@@ -51,11 +49,11 @@ class Node{
             }
             counter++;
             temp = temp->next;
-        }*/
+        }
         cout << "Removing";
     }
-    void add(int index, Node** head){
-        /*int counter = 0;
+    static void add(int index, Node** head){
+        int counter = 0;
         Node* temp = *head;
         for (int i = 0; i < index; i++)
         {
@@ -66,43 +64,53 @@ class Node{
             }
             counter++;
             temp = temp->next;
-        }*/
+        }
         cout << "Adding";
     }
     int size(){
         Node* temp = this;
+        Node* mem = this;
         int counter = 0;
-        while(temp != NULL){
+        do{
             counter++;
             temp = temp->next;
-        }
+        }while(temp != mem);
         return counter;
     }
-    void show(int index, Node** head){
+    static void show(int index, Node** head){
         int counter = 0;
         Node* temp = *head;
-        for (int i = 0; i < index; i++)
-        {
-            if(counter == index){
-                cout << temp->data << endl;
-                return;
-            }
-            counter++;
+        while(counter != index){
             temp = temp->next;
+            counter++;
         }
+        Node* mem = temp;
+        if(temp == nullptr){
+            cout << "List is empty" << endl;
+            return;
+        }
+        do{
+            cout << temp->data << " ";
+            temp = temp->next;
+        }while(temp != mem);
+        cout << endl;
     }
 };
 
 int main()
 {
-    Node *head = NULL;
+    Node *head = nullptr;
     int numOfTeams, startingTeam;
-    bool direction = 0;
-    int operations, move = 0, index, flag = 0;
+    bool direction = false;
+    int operations, move = 0, index, flag = 0,case_nr = 0;
     cout << "Enter team data:\n";
     cin >> numOfTeams;
     cout << "Enter starting team:\n";
     cin >> startingTeam;
+    cout<<"Enter direction: ";
+    cin >> direction;
+    cout<<"Number of operations: ";
+    cin >> operations;
     index = startingTeam;
     for (int i = 0; i < numOfTeams; i++)
     {
@@ -112,26 +120,28 @@ int main()
             head->insert(i - 1, &head);
        }
     }
-    head->printInOrder(&head);
-    cout << "Enter direction ( 1 | 0 ):\n ";
-    cin >> direction;
-    cout<<"Enter number of operations:\n";
-    cin >> operations;
     for(int i = 0; i < operations; i++){
-        cin >> move;
-        if(direction == 1){
-            index += move;
-            }else{
-            abs(index -= move);
-        }
-        index %= head->size();
-        switch (move)
+        cout<<"Enter Operations: ";
+        cin >> case_nr;
+        switch (case_nr)
             {
             case 0:
+            cin >> move;
+                if(direction){
+                    index += move;
+                }else abs(index -= move);
+                index %= head->size();
             head->show(index, &head);
             break;
             case 1:
                 //Remove player
+                cin >> move;
+                if(direction){
+                    index += move;
+                }else abs(index -= move);
+                index %= head->size();
+                cout<<"Flag: ";
+                cin>>flag;
                 switch(flag){
                     case 0:
                         index %= head->size();
@@ -145,6 +155,11 @@ int main()
                 }
             break;
             case 2:
+            cin >> move;
+                if(direction){
+                    index += move;
+                }else abs(index -= move);
+                index %= head->size();
                 //Direction change
                 direction = !direction;
             break;
