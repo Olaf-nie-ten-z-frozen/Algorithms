@@ -27,14 +27,14 @@ class Node{
         Node* temp = this;
         Node* mem = temp;
         if(temp == nullptr){
-            cout << "List is empty" << endl;
+            cout << "List is empty\n" << "\n";
             return;
         }
         do{
             cout << temp->data << " ";
             temp = temp->next;
         }while(temp != mem);
-        cout << endl;
+        cout << "\n";
     }
     static void remover(int index, Node** head){
         int counter = 0;
@@ -43,7 +43,7 @@ class Node{
             if(counter == index){
             temp->prev->next = temp->next;
             temp->next->prev = temp->prev;
-            cout << "Removing "<<temp->data;
+            cout << "Removing: \n"<<temp->data << "\n";
             delete temp;
             return;
             }
@@ -64,7 +64,7 @@ class Node{
             counter++;
             temp = temp->next;
         }
-        cout << "Adding";
+        cout << "Adding: \n" << temp->data;
     }
     int size(){
         Node* temp = this;
@@ -85,14 +85,14 @@ class Node{
         }
         Node* mem = temp;
         if(temp == nullptr){
-            cout << "List is empty" << endl;
+            cout << "List is empty\n";
             return;
         }
         do{
             cout << temp->data << " ";
             temp = temp->next;
         }while(temp != mem);
-        cout << endl;
+        cout << "\n";
     }
 };
 
@@ -106,11 +106,11 @@ int main()
     cin >> numOfTeams;
     cout << "Enter starting team:\n";
     cin >> startingTeam;
-    cout<<"Enter direction: ";
+    cout<<"Enter direction: \n";
     cin >> direction;
-    cout<<"Number of operations: ";
+    cout<<"Number of operations: \n";
     cin >> operations;
-    index = startingTeam;
+    index = startingTeam*2;
     for (int i = 0; i < numOfTeams; i++)
     {
        head->insert(i, &head);
@@ -120,26 +120,36 @@ int main()
        }
     }
     for(int i = 0; i < operations; i++){
-        cout<<"Enter Operations: ";
+        cout<<"Enter Operations:\n";
         cin >> case_nr;
         switch (case_nr)
             {
             case 0:
             cin >> move;
-                if(direction){
-                    index += move;
-                }else abs(index -= move);
+                    if(direction){
+                        while((index - move) < 0) {
+                            index += head->size();
+                        }
+                        index = index - move + 1;
+                    }else {
+                        index = index + move - 1;
+                    }
                 index %= head->size();
             head->show(index, &head);
             break;
             case 1:
                 //Remove player
                 cin >> move;
-                if(direction){
-                    index += move;
-                }else abs(index -= move);
+                    if(direction){
+                        while((index - move) < 0) {
+                            index += head->size();
+                        }
+                        index = index - move + 1;
+                    }else {
+                        index = index + move - 1;
+                    }
                 index %= head->size();
-                cout<<"Flag: ";
+                cout<<"Flag: \n";
                 cin>>flag;
                 switch(flag){
                     case 0:
@@ -155,9 +165,14 @@ int main()
             break;
             case 2:
             cin >> move;
-                if(direction){
-                    index += move;
-                }else abs(index -= move);
+                    if(direction){
+                        while((index - move) < 0) {
+                            index += head->size();
+                        }
+                        index = index - move + 1;
+                    }else {
+                        index = index + move - 1;
+                    }
                 index %= head->size();
                 //Direction change
                 direction = !direction;
