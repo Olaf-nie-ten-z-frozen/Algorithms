@@ -3,9 +3,9 @@ using namespace std;
 
 class Node{
     public:
-    int data{};
-    Node* next{};
-    Node* prev{};
+    int data;
+    Node* next;
+    Node* prev;
 
     static void insert(int data, Node** head){
         Node* newNode = new Node();
@@ -39,18 +39,17 @@ class Node{
     static void remover(int index, Node** head){
         int counter = 0;
         Node* temp = *head;
-        for (int i = 0; i < index; i++)
-        {
+        while(1){
             if(counter == index){
-                temp->prev->next = temp->next;
-                temp->next->prev = temp->prev;
-                delete temp;
-                return;
+            temp->prev->next = temp->next;
+            temp->next->prev = temp->prev;
+            cout << "Removing "<<temp->data;
+            delete temp;
+            return;
             }
-            counter++;
             temp = temp->next;
-        }
-        cout << "Removing";
+            counter++;
+            }
     }
     static void add(int index, Node** head){
         int counter = 0;
