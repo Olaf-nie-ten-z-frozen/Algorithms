@@ -64,7 +64,7 @@ class Node{
             counter++;
             temp = temp->next;
         }
-        cout << "Adding: \n" << temp->data;
+        cout << "Adding: \n" << temp->data << "\n";
     }
     int size(){
         Node* temp = this;
