@@ -1,6 +1,5 @@
 #include<iostream>
 #include<bits/stdc++.h>
-
 class Wniosek{
 public:
     std::string imie;
@@ -16,99 +15,79 @@ public:
         }
         return a.id < b.id;
     }
-};
-void insertion_sort(Wniosek** wnioski, int size)
-{
-    //sortowanie przez wstawianie
-    for(int i = 1; i < size; i++){
-        Wniosek* temp = wnioski[i];
-        int j = i - 1;
-        while(j >= 0 && Wniosek::comp(*temp, *wnioski[j])){
-            wnioski[j + 1] = wnioski[j];
-            j--;
-        }
-        wnioski[j + 1] = temp;
+    static bool comp2(Wniosek* a, Wniosek* b){
+        return comp(*a, *b);
     }
-}
-Wniosek* medianFinder(Wniosek** wnioski, int size){
-    if(size < 10){
-        insertion_sort(wnioski, size);
+};
+Wniosek *medianFinder(Wniosek **wnioski, int size) {
+    if (size < 10) {
+        std::sort(wnioski, wnioski + size, Wniosek::comp2);
         return wnioski[size / 2];
     }
-    int counter = 0;
     int numOfArrays = ceil(size / 5.0);
-    Wniosek **median = new Wniosek*[numOfArrays];
-    Wniosek* m;
-    Wniosek **temp = new Wniosek*[5];
-    for (int i = 0; i < numOfArrays - 1; i+=5){
-        for(int j = 0; j < 5; j++){
-            temp[j] = wnioski[i + j];
+    for (int i = 0; i < numOfArrays; i++) {
+        if (i == numOfArrays - 1) {
+            medianFinder(wnioski + (i * 5), size % 5);
+            std::swap(wnioski[i],wnioski[(i*5) + (size % 5) / 2]);  // teraz wrzucamy mediany
+            // na poczatek
+        } else {
+            medianFinder(wnioski + i * 5, 5);
+            std::swap(wnioski[i],wnioski[(i*5) + 2]);  // teraz wrzucamy mediany na poczatek jeśli środek będzie 3 el.
         }
-        insertion_sort(temp, 5);
-        median[counter] = temp[2];
-        counter++;
     }
-    for(int j = (numOfArrays-1)*5; j < size; j++){ // laczna długość policzonych - (size) długość która została
-        temp[j - (numOfArrays-1)*5] = wnioski[j];
-    }
-    insertion_sort(temp, size - (numOfArrays - 1) * 5);
-    median[counter] = temp[(size - (numOfArrays - 1) * 5) / 2];
-    counter++;
-    m = medianFinder(median, counter);
-    return m;
+    return medianFinder(wnioski, numOfArrays); // i tutaj zliczamy juz mediane median
 }
 Wniosek* MagicFive(Wniosek** wnioski, int size, int element, Wniosek* median){
     if(size < 10){
-        insertion_sort(wnioski, size);
+        std::sort(wnioski, wnioski + size, Wniosek::comp2);
         return wnioski[element];
     }
-    int c_size = 0;
     int b_size = 0;
     int d_size = 0;
-    Wniosek **B = new Wniosek*[size];
-    Wniosek **D = new Wniosek*[size];
-    for (int i = 0; i < size; i++)
+    int d = size - 1;
+    for (int i = 0; i <= d; i++)
     {
         if(Wniosek::comp(*wnioski[i], *median)){
-            B[b_size] = wnioski[i];
+            std::swap(wnioski[b_size], wnioski[i]);
             b_size++;
         }
         else if(Wniosek::comp(*median, *wnioski[i])){
-            D[d_size] = wnioski[i];
+            std::swap(wnioski[d], wnioski[i]);
+            i--; // musimy zmniejszyc poniewaz moze byc el. mniejszy od mediany
+            d--;
             d_size++;
         }
-        else{
-            c_size++; //wystarczy znac ilosc el.
-        }
     }
-    if(element < b_size){//zwroc element-ty el. listy B
-        delete[] D;
-        return MagicFive(B, b_size, element, medianFinder(B, b_size));
+    if(element < b_size){
+        return MagicFive(wnioski, b_size, element, medianFinder(wnioski, b_size));
     }
-    else if(element >= b_size + c_size){
-        delete[] B;
-       return MagicFive(D, d_size, element - b_size - c_size, medianFinder(D, d_size));
+    else if(element >= b_size + 1){
+        return MagicFive(wnioski + b_size + 1, d_size, element - b_size - 1, medianFinder(wnioski + b_size + 1, d_size)); // zamiast tablicy D
     }
     else{
-        delete[] D;
-        delete[] B;
         return median;
     }
 }
-int main()
-{
+int main(){
+    std::ios_base::sync_with_stdio(false);
+    std::cout.tie(nullptr);
+    std::cin.tie(nullptr);
     int n=0; //liczba uczestnkow
     int k=0; //wylosowana przez system
     Wniosek* median;
     Wniosek* winner;
     std::cin >> n >> k;
     Wniosek** wnioski = new Wniosek*[n];
+    Wniosek* arr = new Wniosek[n];
     for(int i = 0; i < n; i++){
-        wnioski[i]=new Wniosek;
+        //wnioski[i] = new Wniosek; //jedno oddzielne wywolanie alokacji pamieci
+        wnioski[i] = arr + i; //optymalizacja z wnioski = new Wniosek[i]
         std::cin >> wnioski[i]->imie >> wnioski[i]->nazwisko >> wnioski[i]->id;
     }
     median = medianFinder(wnioski, n);
     winner = MagicFive(wnioski, n, k, median);
     std::cout << winner->imie << " " << winner->nazwisko << " " << winner->id;
+    delete[] arr;
+    delete[] wnioski;
     return 0;
 }
